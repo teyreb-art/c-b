@@ -4,3 +4,175 @@
 @media(max-width:760px){.sidebar{position:static;width:100%;height:auto;padding:15px 18px 0}.brand{padding:0 0 12px}.brand-mark{font-size:25px}.brand>span:last-child{font-size:9px}.nav-label,.sidebar-bottom{display:none}.sidebar nav{display:flex;gap:5px;flex-wrap:wrap;padding-bottom:11px}.nav-item{width:auto;white-space:nowrap;font-size:10px;padding:10px;margin:0;gap:6px}.nav-icon{display:none}.workspace{margin-left:0}.topbar{padding:13px 18px;height:auto;min-height:71px}.topbar>span{display:none}.account{width:100%;gap:9px}.logout{margin-left:auto}main{padding:25px 18px 0}.page-heading{margin-bottom:22px;align-items:flex-start}.page-heading>div{min-width:0}h1{font-size:29px;letter-spacing:-1px}.page-heading p:last-child{font-size:11px;max-width:250px}.page-heading>.button{font-size:0;min-width:39px;padding:6px}.page-heading>.button>span{font-size:21px}.stats{gap:8px;margin-bottom:20px}.stat{padding:14px 10px}.stat-label{font-size:9px;gap:5px;line-height:1.4;align-items:flex-start}.stat-label .dot{width:5px;height:5px;margin-top:4px}.stat strong{font-size:29px;margin-top:5px}.stat small{display:none}.panel-heading{padding:19px 17px}.source-label{display:none}.filters{padding:0 17px 16px;gap:12px}.tabs{gap:2px}.tabs button{font-size:9px;padding:7px 8px}.search input{font-size:12px}table{white-space:normal}th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){display:none}td,th{padding:15px 12px}td:nth-child(1){width:53%}td:nth-child(4){width:27%}td:nth-child(5){width:20%}.customer-avatar{display:none}.customer-cell small{font-size:9px;overflow-wrap:anywhere}.open-button{font-size:9px;padding:6px}.pagination{padding:14px 15px}.footnote{font-size:9px}.workspace-footer{margin-top:25px;flex-direction:column;gap:4px}.drawer-header{padding:22px}#detail-content{padding:23px 22px}.detail-grid{gap:16px}.toast{left:50%;width:max-content;max-width:90vw;text-align:center}.activity-panel,.diagnostics{padding:18px}}
 .logout{background:none;border:0;padding:0;cursor:pointer}.login-page{min-height:100dvh;display:grid;grid-template-columns:47% 53%;background:white}.login-brand-panel{background:var(--ink);color:white;padding:46px 60px;display:flex;flex-direction:column;justify-content:space-between;min-height:100dvh}.login-brand-panel .brand{align-self:flex-start;padding:0}.login-brand-panel>div{padding:70px 0}.login-brand-panel .eyebrow{color:#d2b700;margin-bottom:24px}.login-brand-panel h1{font-size:45px;line-height:1.15;letter-spacing:-1.8px;max-width:430px}.login-brand-panel>div>p:not(.eyebrow){max-width:315px;color:#b8bdc4;font-size:13px;line-height:1.9;margin-top:24px}.login-line{height:3px;width:52px;background:var(--yellow);margin-top:38px}.login-brand-panel>div>.login-caption{font-size:11px;margin-top:18px}.login-footer{font-size:10px;color:#92999f;margin:0}.login-main{display:flex;align-items:center;justify-content:center;max-width:none;padding:50px 35px;margin:0}.login-card{width:100%;max-width:345px}.login-card h2{font-size:29px;letter-spacing:-.9px;margin:0 0 10px}.login-card>p:not(.eyebrow){color:var(--muted);font-size:12px;line-height:1.8}.login-card form{margin-top:30px}.login-card label{display:block;font-size:11px;font-weight:650;margin-bottom:8px}.login-card input{width:100%;border:1px solid #d9dde2;border-radius:6px;padding:13px 14px;background:white;font-size:13px;margin-bottom:22px;color:var(--ink)}.password-field{position:relative}.password-field input{padding-right:66px}.password-field button{position:absolute;right:12px;top:13px;border:0;background:white;font-size:10px;color:#68707b;padding:2px}.login-card form>.button{width:100%;padding:13px;font-size:12px;min-height:46px}.login-card>.login-help{font-size:10px!important;line-height:1.8;margin-top:20px}.login-back{display:inline-block;font-size:10px;color:#5f6975;text-decoration:none;margin-top:22px}.login-card .detail-error{margin:0 0 17px;font-size:12px}.login-page .login-brand-panel .brand small{color:#aeb5bc}
 @media(max-width:760px){.login-page{display:flex;flex-direction:column}.login-brand-panel{min-height:auto;padding:25px}.login-brand-panel>div,.login-brand-panel>.login-footer{display:none}.login-main{padding:42px 25px;align-items:flex-start;flex:1}.login-card h2{font-size:28px}.login-card input{font-size:16px}.login-card{max-width:390px}.login-card .eyebrow{margin-bottom:10px}}
+
+/* C&B DASHBOARD UITBREIDING */
+
+.demo-notice {
+  background: #fff8d4;
+  color: #685800;
+  border: 1px solid #f0e5a8;
+  padding: 11px 15px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .7px;
+  margin-bottom: 22px;
+  border-radius: 5px;
+}
+
+.stats {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.stat-information {
+  cursor: default;
+}
+
+.stat-information:hover {
+  border-color: var(--line);
+}
+
+.stat-information strong {
+  font-size: clamp(21px, 2vw, 34px);
+  overflow-wrap: anywhere;
+}
+
+.calendar-panel {
+  padding: 24px;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.calendar-toolbar h2 {
+  font-size: 20px;
+  text-transform: capitalize;
+}
+
+.calendar-toolbar > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.calendar-weekday {
+  background: #f6f7f8;
+  text-align: center;
+  padding: 13px 5px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.calendar-blank {
+  background: #fafafa;
+  min-height: 110px;
+}
+
+.calendar-day {
+  background: white;
+  min-height: 110px;
+  padding: 9px;
+  min-width: 0;
+}
+
+.calendar-day > strong {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 9px;
+}
+
+.calendar-current {
+  background: #fffbe6;
+}
+
+.calendar-current > strong {
+  background: var(--yellow);
+  display: inline-grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+
+.calendar-appointment {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #f2f3f5;
+  color: var(--ink);
+  border: 0;
+  border-left: 3px solid var(--yellow);
+  border-radius: 3px;
+  padding: 7px;
+  margin-bottom: 5px;
+  font-size: 10px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.calendar-appointment:hover {
+  background: #e9ebee;
+}
+
+.calendar-caption {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 18px;
+}
+
+@media (max-width: 1200px) {
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat {
+    padding: 15px;
+  }
+
+  .calendar-panel {
+    padding: 12px;
+  }
+
+  .calendar-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-day,
+  .calendar-blank {
+    min-height: 72px;
+    padding: 4px;
+  }
+
+  .calendar-day > strong {
+    font-size: 10px;
+  }
+
+  .calendar-appointment {
+    font-size: 8px;
+    padding: 4px 2px;
+  }
+
+  .calendar-weekday {
+    font-size: 9px;
+    padding: 8px 2px;
+  }
+}
