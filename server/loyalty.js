@@ -1,5 +1,6 @@
 
 import { problem } from './access.js';
+import { sendLoyaltyEmail } from './loyalty-email.js';
 
 const reply = (data, status = 200) =>
   Response.json(data, {
