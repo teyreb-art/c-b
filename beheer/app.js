@@ -1,5 +1,21 @@
 const $ = selector => document.querySelector(selector);
 const labels = ['nieuw', 'in behandeling', 'afgerond', 'geannuleerd'];
+
+const calendarState = {
+  month: new Date().toLocaleDateString('sv-SE', {
+    timeZone: 'Europe/Brussels',
+    year: 'numeric',
+    month: '2-digit'
+  }).slice(0, 7),
+  version: 0
+};
+
+const euro = value => new Intl.NumberFormat('nl-BE', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0
+}).format(value || 0);
+
 const state = { user: null, view: 'requests', status: '', q: '', page: 0, activityPage: 0, selected: null, listVersion: 0, detailVersion: 0 };
 const date = value => value ? new Intl.DateTimeFormat('nl-BE', { dateStyle: 'medium', timeZone: 'Europe/Brussels' }).format(new Date(value.length === 10 ? value + 'T12:00:00Z' : value)) : 'Te bespreken';
 const timestamp = value => new Intl.DateTimeFormat('nl-BE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Brussels' }).format(new Date(value));
