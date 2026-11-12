@@ -318,11 +318,28 @@ async function exportRequests() {
 
 function setView(view) {
   if (view === 'diagnostics' && state.user?.role !== 'upside') return;
-  state.view = view; $('#page-alert').hidden = true;
-  for (const name of ['requests', 'activity', 'diagnostics']) $('#' + name + '-view').hidden = name !== view;
-  document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === view));
-  if (view === 'requests') loadRequests(); if (view === 'activity') loadActivity(); if (view === 'diagnostics') diagnostics();
+
+  state.view = view;
+  $('#page-alert').hidden = true;
+
+  for (const name of ['requests', 'calendar', 'activity', 'diagnostics']) {
+    $('#' + name + '-view').hidden = name !== view;
+  }
+
+  document.querySelectorAll('[data-view]').forEach(button => {
+    button.classList.toggle('active', button.dataset.view === view);
+  });
+
+  if (view === 'requests') {
+    loadRequests();
+    loadOverview();
+  }
+
+  if (view === 'calendar') loadCalendar();
+  if (view === 'activity') loadActivity();
+  if (view === 'diagnostics') diagnostics();
 }
+
 document.querySelectorAll('[data-status]').forEach(button => button.addEventListener('click', () => applyFilters(button.dataset.status)));
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
 $('#refresh').addEventListener('click', () => loadRequests());
