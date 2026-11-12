@@ -3,11 +3,20 @@
   "name": "c-b",
   "main": "worker.js",
   "compatibility_date": "2026-11-12",
-  "build": { "command": "node build-static.mjs" },
+  "keep_vars": true,
+  "build": {
+    "command": "node build-static.mjs"
+  },
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/beheer", "/beheer/*", "/admin.html", "/beheer.html"]
+    "run_worker_first": [
+      "/api/*",
+      "/beheer",
+      "/beheer/*",
+      "/admin.html",
+      "/beheer.html"
+    ]
   },
   "d1_databases": [
     {
