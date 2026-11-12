@@ -118,6 +118,77 @@ export async function handleDashboard(req, env) {
     }
     if (!env.DB) throw problem('De database is nog niet gekoppeld.', 503);
     if (path === '/api/dashboard/me' && req.method === 'GET') return json({ user });
+    
+    // DASHBOARDSTATISTIEKEN
+    if (path === '/api/dashboard/overview' && req.method === 'GET') {
+      const result = await env.DB.prepare(`
+        SELECT
+          COUNT(*) AS total,
+          COALESCE(SUM(
+            CASE WHEN status != 'geannuleerd'
+            THEN indicative_total ELSE 0 END
+          ), 0) AS indicative_value,
+          SUM(CASE WHEN status = 'nieuw' THEN 1 ELSE 0 END) AS new_count,
+          SUM(CASE WHEN status = 'in behandeling' THEN 1 ELSE 0 END) AS progress_count,
+          SUM(CASE WHEN status = 'afgerond' THEN 1 ELSE 0 END) AS done_count
+        FROM requests
+      `).first();
+
+      return json({ overview: result });
+    }
+
+    // KALENDER MET VOORKEURSDATUMS
+    if (path === '/api/dashboard/calendar' && req.method === 'GET') {
+      const month = url.searchParams.get('month') || '';
+
+      if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+        throw problem('Ongeldige maand.', 400);
+      }
+
+      const [year, monthNumber] = month.split('-').map(Number);
+      const nextMonth = new Date(
+        Date.UTC(year, monthNumber, 1)
+      ).toISOString().slice(0, 10);
+
+      const result = await env.DB.prepare(`
+        SELECT
+          id, name, service, vehicle,
+          preferred_date, status
+        FROM requests
+        WHERE preferred_date >= ?
+          AND preferred_date < ?
+        ORDER BY preferred_date ASC, created_at ASC
+        LIMIT 1000
+      `).bind(month + '-01', nextMonth).all();
+
+      return json({
+        items: result.results,
+        truncated: result.results.length === 1000
+      });
+    }
+
+    // CSV-EXPORT VAN TESTAANVRAGEN
+    if (path === '/api/dashboard/export' && req.method === 'GET') {
+      const status = text(url.searchParams.get('status'));
+
+      if (status && !statuses.includes(status)) {
+        throw problem('Ongeldige status.', 400);
+      }
+
+      const result = await env.DB.prepare(`
+        SELECT
+          name, email, phone, vehicle, service,
+          preferred_date, status, indicative_total,
+          message, created_at
+        FROM requests
+        WHERE (? = '' OR status = ?)
+        ORDER BY created_at DESC
+        LIMIT 10000
+      `).bind(status, status).all();
+
+      return csvResponse(result.results);
+    }
+
     if (path === '/api/dashboard/requests' && req.method === 'GET') {
       const status = text(url.searchParams.get('status'));
       if (status && !statuses.includes(status)) throw problem('Ongeldige status.');
