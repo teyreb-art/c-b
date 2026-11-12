@@ -91,19 +91,25 @@
 
         <div class="stats" aria-label="Overzicht aanvragen">
           <button class="stat" data-status="nieuw">
-            <span class="stat-label"><i class="dot yellow"></i> Nieuwe aanvragen</span>
+            <span class="stat-label">
+              <i class="dot yellow"></i> Nieuwe aanvragen
+            </span>
             <strong id="stat-new">—</strong>
             <small>Klaar voor een eerste reactie</small>
           </button>
 
           <button class="stat" data-status="in behandeling">
-            <span class="stat-label"><i class="dot blue"></i> In behandeling</span>
+            <span class="stat-label">
+              <i class="dot blue"></i> In behandeling
+            </span>
             <strong id="stat-progress">—</strong>
             <small>In overleg met de klant</small>
           </button>
 
           <button class="stat" data-status="afgerond">
-            <span class="stat-label"><i class="dot green"></i> Afgerond</span>
+            <span class="stat-label">
+              <i class="dot green"></i> Afgerond
+            </span>
             <strong id="stat-done">—</strong>
             <small>Opgevolgd en afgewerkt</small>
           </button>
@@ -125,7 +131,9 @@
           <div class="panel-heading">
             <div>
               <h2 id="requests-title">Aanvragen</h2>
-              <p id="result-caption" role="status">Aanvragen laden…</p>
+              <p id="result-caption" role="status">
+                Aanvragen laden…
+              </p>
             </div>
 
             <button id="export-csv" class="button secondary small">
@@ -145,9 +153,13 @@
             <label class="search">
               <span aria-hidden="true">⌕</span>
               <span class="sr-only">Zoek op naam, e-mail, telefoon of voertuig</span>
-              <input id="search" type="search"
+              <input
+                id="search"
+                type="search"
                 placeholder="Zoek een klant of voertuig…"
-                maxlength="100" autocomplete="off">
+                maxlength="100"
+                autocomplete="off"
+              >
             </label>
           </div>
 
@@ -169,20 +181,27 @@
           <div class="empty" id="empty" hidden>
             <span class="empty-icon">▤</span>
             <h3 id="empty-title">Geen aanvragen gevonden</h3>
-            <p id="empty-copy">Nieuwe aanvragen verschijnen hier zodra iemand het formulier invult.</p>
+            <p id="empty-copy">
+              Nieuwe aanvragen verschijnen hier zodra iemand het formulier invult.
+            </p>
           </div>
 
           <div class="pagination">
             <span id="range">—</span>
             <div>
-              <button id="previous" class="button secondary small" disabled>Vorige</button>
-              <button id="next" class="button secondary small" disabled>Volgende</button>
+              <button id="previous" class="button secondary small" disabled>
+                Vorige
+              </button>
+              <button id="next" class="button secondary small" disabled>
+                Volgende
+              </button>
             </div>
           </div>
         </section>
 
         <p class="footnote">
-          Een voorkeursdatum is een aanvraag. Spreek de afspraak rechtstreeks met de klant af.
+          Een voorkeursdatum is een aanvraag.
+          Spreek de afspraak rechtstreeks met de klant af.
         </p>
       </section>
 
@@ -199,11 +218,18 @@
           <div class="calendar-toolbar">
             <h2 id="calendar-title">Kalender</h2>
             <div>
-              <button id="calendar-prev" class="button secondary small">Vorige</button>
-              <button id="calendar-today" class="button secondary small">Vandaag</button>
-              <button id="calendar-next" class="button secondary small">Volgende</button>
+              <button id="calendar-prev" class="button secondary small">
+                Vorige
+              </button>
+              <button id="calendar-today" class="button secondary small">
+                Vandaag
+              </button>
+              <button id="calendar-next" class="button secondary small">
+                Volgende
+              </button>
             </div>
           </div>
+
           <div id="calendar-grid" class="calendar-grid"></div>
           <p id="calendar-caption" class="calendar-caption" role="status"></p>
         </div>
@@ -221,11 +247,16 @@
         <div class="panel activity-panel">
           <h2>Laatste activiteit</h2>
           <div id="activity-list"></div>
+
           <div class="pagination">
             <span id="activity-range"></span>
             <div>
-              <button id="activity-prev" class="button secondary small">Vorige</button>
-              <button id="activity-next" class="button secondary small">Volgende</button>
+              <button id="activity-prev" class="button secondary small">
+                Vorige
+              </button>
+              <button id="activity-next" class="button secondary small">
+                Volgende
+              </button>
             </div>
           </div>
         </div>
@@ -239,6 +270,7 @@
             <p>Controleer of de verbindingen voor het dashboard werken.</p>
           </div>
         </div>
+
         <div id="diagnostics-list" class="panel diagnostics"></div>
       </section>
 
@@ -256,8 +288,14 @@
         <h2 id="detail-name">Klantgegevens</h2>
         <p id="detail-created"></p>
       </div>
-      <button id="close-detail" class="close" aria-label="Sluit klantdetails">×</button>
+
+      <button
+        id="close-detail"
+        class="close"
+        aria-label="Sluit klantdetails"
+      >×</button>
     </div>
+
     <div id="detail-content"></div>
   </dialog>
 
