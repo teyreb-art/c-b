@@ -178,6 +178,144 @@ async function diagnostics() {
     root.append(element('p', 'Gecontroleerd op ' + timestamp(data.checkedAt)), element('p', 'De website bewaart aanvragen in D1. Dit dashboard verstuurt geen e-mails en bevestigt geen afspraken.'));
   } catch (error) { root.replaceChildren(); alertError(error); }
 }
+
+async function loadOverview() {
+  try {
+    const data = await api('overview');
+    const overview = data.overview;
+
+    $('#stat-total').textContent = overview.total || 0;
+    $('#stat-value').textContent = euro(overview.indicative_value);
+  } catch (error) {
+    $('#stat-total').textContent = '—';
+    $('#stat-value').textContent = '—';
+    console.error('Statistieken laden mislukt:', error);
+  }
+}
+
+function changeCalendarMonth(amount) {
+  const [year, month] = calendarState.month.split('-').map(Number);
+  const next = new Date(Date.UTC(year, month - 1 + amount, 1));
+
+  calendarState.month = next.toISOString().slice(0, 7);
+  loadCalendar();
+}
+
+async function loadCalendar() {
+  const version = ++calendarState.version;
+  const root = $('#calendar-grid');
+  root.replaceChildren(element('p', 'Kalender laden…'));
+
+  try {
+    const data = await api(
+      'calendar?' + new URLSearchParams({ month: calendarState.month })
+    );
+
+    if (version !== calendarState.version) return;
+
+    const [year, month] = calendarState.month.split('-').map(Number);
+    const firstDay = new Date(Date.UTC(year, month - 1, 1));
+    const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    const offset = (firstDay.getUTCDay() + 6) % 7;
+
+    $('#calendar-title').textContent =
+      new Intl.DateTimeFormat('nl-BE', {
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'UTC'
+      }).format(firstDay);
+
+    root.replaceChildren();
+
+    for (const label of ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo']) {
+      root.append(element('div', label, 'calendar-weekday'));
+    }
+
+    for (let i = 0; i < offset; i++) {
+      root.append(element('div', '', 'calendar-blank'));
+    }
+
+    const today = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Europe/Brussels',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayKey = calendarState.month + '-' + String(day).padStart(2, '0');
+      const cell = element('div', undefined, 'calendar-day');
+
+      if (dayKey === today) cell.classList.add('calendar-current');
+
+      cell.append(element('strong', String(day)));
+
+      const appointments = data.items.filter(
+        item => item.preferred_date === dayKey
+      );
+
+      for (const item of appointments) {
+        const button = element(
+          'button',
+          item.name + ' · ' + item.service,
+          'calendar-appointment'
+        );
+
+        button.type = 'button';
+        button.title = item.service + ' · ' + item.status;
+        button.addEventListener('click', () => openDetail(item.id));
+        cell.append(button);
+      }
+
+      root.append(cell);
+    }
+
+    $('#calendar-caption').textContent =
+      data.items.length + ' aanvragen met een voorkeursdatum deze maand.' +
+      (data.truncated ? ' Er zijn mogelijk meer aanvragen dan getoond.' : '');
+
+  } catch (error) {
+    if (version !== calendarState.version) return;
+    root.replaceChildren(element('p', error.message));
+  }
+}
+
+async function exportRequests() {
+  const button = $('#export-csv');
+  button.disabled = true;
+
+  try {
+    const response = await fetch(
+      '/api/dashboard/export?' + new URLSearchParams({
+        status: state.status
+      }),
+      { credentials: 'same-origin' }
+    );
+
+    if (!response.ok) {
+      throw new Error('Exporteren is mislukt.');
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = 'cb-testaanvragen.csv';
+    document.body.append(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    notify('CSV-bestand gedownload');
+
+  } catch (error) {
+    notify(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
+
 function setView(view) {
   if (view === 'diagnostics' && state.user?.role !== 'upside') return;
   state.view = view; $('#page-alert').hidden = true;
