@@ -212,8 +212,43 @@ export async function handleLoyalty(request, env, user) {
       throw problem('Klant niet gevonden.', 404);
     }
 
-    return reply({ ok: true, change: result }, 201);
+// Haal de klant op voor de bevestigingsmail.
+const customer = await db.prepare(`
+  SELECT name
+  FROM loyalty_customers
+  WHERE id = ?
+`).bind(customerId).first();
+
+// Tel de geregistreerde bandenwissels.
+const countRow = await db.prepare(`
+  SELECT COUNT(*) AS total
+  FROM loyalty_tire_changes
+  WHERE customer_id = ?
+`).bind(customerId).first();
+
+const completed = Number(countRow?.total || 0);
+
+// Verstuur uitsluitend bij een nieuwe registratie.
+// De testmail gaat altijd naar het ingestelde Gmail-adres.
+let emailSent = false;
+
+if (customer) {
+  try {
+    emailSent = await sendLoyaltyEmail(env, {
+      name: customer.name,
+      completed,
+      change: result
+    });
+  } catch (error) {
+    console.error('Loyaliteitsmail mislukt:', error);
   }
+}
+
+return reply({
+  ok: true,
+  change: result,
+  email_sent: emailSent
+}, 201);  }
 
   throw problem('Loyaliteitsfunctie niet gevonden.', 404);
 }
