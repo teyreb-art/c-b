@@ -359,3 +359,26 @@ try {
   $('#account-name').textContent = user.name; $('#account-email').textContent = user.email; $('#avatar').textContent = user.role === 'upside' ? 'UP' : 'CB'; $('#tech-nav').hidden = user.role !== 'upside';
   await loadRequests();
 } catch (error) { $('#account-name').textContent = 'Geen actieve sessie'; $('#result-caption').textContent = 'Log in om aanvragen te bekijken.'; alertError(error); }
+
+
+$('#calendar-prev').addEventListener('click', () => {
+  changeCalendarMonth(-1);
+});
+
+$('#calendar-next').addEventListener('click', () => {
+  changeCalendarMonth(1);
+});
+
+$('#calendar-today').addEventListener('click', () => {
+  calendarState.month = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Brussels',
+    year: 'numeric',
+    month: '2-digit'
+  }).format(new Date()).slice(0, 7);
+
+  loadCalendar();
+});
+
+$('#export-csv').addEventListener('click', exportRequests);
+
+loadOverview();
