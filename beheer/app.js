@@ -322,8 +322,7 @@ function setView(view) {
   state.view = view;
   $('#page-alert').hidden = true;
 
-  for (const name of ['requests', 'calendar', 'activity', 'diagnostics']) {
-    $('#' + name + '-view').hidden = name !== view;
+for (const name of ['requests', 'calendar', 'loyalty', 'activity', 'diagnostics']) {    $('#' + name + '-view').hidden = name !== view;
   }
 
   document.querySelectorAll('[data-view]').forEach(button => {
@@ -336,6 +335,7 @@ function setView(view) {
   }
 
   if (view === 'calendar') loadCalendar();
+  if (view === 'loyalty') loadLoyalty();
   if (view === 'activity') loadActivity();
   if (view === 'diagnostics') diagnostics();
 }
@@ -382,3 +382,521 @@ $('#calendar-today').addEventListener('click', () => {
 $('#export-csv').addEventListener('click', exportRequests);
 
 loadOverview();
+
+/* =========================================
+   C&B WISSELVOORDEEL
+   Klanten en loyaliteitsregistraties
+========================================= */
+
+const loyaltyState = {
+  customers: [],
+  selected: null,
+  version: 0,
+  detailVersion: 0
+};
+
+const loyaltyMoney = cents =>
+  new Intl.NumberFormat('nl-BE', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format((Number(cents) || 0) / 100);
+
+function loyaltyField(label, value) {
+  const wrapper = element('div', undefined, 'loyalty-info-field');
+  wrapper.append(
+    element('small', label),
+    element('strong', value || 'Niet ingevuld')
+  );
+  return wrapper;
+}
+
+async function loadLoyalty() {
+  const version = ++loyaltyState.version;
+  const caption = $('#loyalty-caption');
+
+  caption.textContent = 'Klanten laden…';
+  $('#loyalty-refresh').disabled = true;
+
+  try {
+    const data = await api('loyalty/customers');
+
+    if (version !== loyaltyState.version) return;
+
+    loyaltyState.customers = data.items || [];
+
+    const customers = loyaltyState.customers;
+    const ready = customers.filter(
+      customer => Number(customer.change_count) % 2 === 1
+    ).length;
+
+    $('#loyalty-total').textContent = customers.length;
+    $('#loyalty-ready').textContent = ready;
+    caption.textContent =
+      customers.length + ' geregistreerde klanten';
+
+    renderLoyaltyCustomers();
+  } catch (error) {
+    if (version !== loyaltyState.version) return;
+    caption.textContent = 'Laden mislukt';
+    alertError(error);
+  } finally {
+    if (version === loyaltyState.version) {
+      $('#loyalty-refresh').disabled = false;
+    }
+  }
+}
+
+function renderLoyaltyCustomers() {
+  const query = $('#loyalty-search').value
+    .trim()
+    .toLocaleLowerCase('nl-BE');
+
+  const customers = loyaltyState.customers.filter(customer => {
+    const searchable = [
+      customer.name,
+      customer.email,
+      customer.phone,
+      customer.vehicle,
+      customer.license_plate
+    ].join(' ').toLocaleLowerCase('nl-BE');
+
+    return searchable.includes(query);
+  });
+
+  const root = $('#loyalty-rows');
+  root.replaceChildren();
+
+  for (const customer of customers) {
+    const count = Number(customer.change_count) || 0;
+    const discountNext = count % 2 === 1;
+
+    const row = element('tr');
+
+    const nameCell = element('td');
+    const nameButton = element(
+      'button',
+      customer.name,
+      'text-button'
+    );
+
+    nameButton.type = 'button';
+    nameButton.addEventListener('click', () => {
+      openLoyaltyCustomer(customer.id);
+    });
+
+    nameCell.append(
+      nameButton,
+      element(
+        'small',
+        customer.email || customer.phone || ''
+      )
+    );
+
+    const vehicleCell = element('td');
+    vehicleCell.append(
+      element('strong', customer.vehicle || 'Niet ingevuld'),
+      element('small', customer.license_plate || '')
+    );
+
+    const countCell = element('td', String(count));
+
+    const advantageCell = element('td');
+    advantageCell.append(
+      element(
+        'span',
+        discountNext ? '10% korting' : 'Normaal tarief',
+        discountNext
+          ? 'badge badge-nieuw'
+          : 'badge'
+      )
+    );
+
+    const actionCell = element('td');
+    const button = element(
+      'button',
+      'Bekijken',
+      'open-button'
+    );
+
+    button.type = 'button';
+    button.addEventListener('click', () => {
+      openLoyaltyCustomer(customer.id);
+    });
+
+    actionCell.append(button);
+
+    row.append(
+      nameCell,
+      vehicleCell,
+      countCell,
+      advantageCell,
+      actionCell
+    );
+
+    root.append(row);
+  }
+
+  $('#loyalty-empty').hidden = customers.length > 0;
+}
+
+async function openLoyaltyCustomer(id) {
+  loyaltyState.selected = id;
+  const version = ++loyaltyState.detailVersion;
+
+  $('#loyalty-detail-name').textContent = 'Even laden…';
+  $('#loyalty-detail-subtitle').textContent = '';
+  $('#loyalty-detail-content').replaceChildren(
+    element('p', 'Klantgegevens laden…')
+  );
+
+  if (!$('#loyalty-detail').open) {
+    $('#loyalty-detail').showModal();
+  }
+
+  try {
+    const data = await api(
+      'loyalty/customer?' + new URLSearchParams({ id })
+    );
+
+    if (
+      version !== loyaltyState.detailVersion ||
+      loyaltyState.selected !== id
+    ) return;
+
+    renderLoyaltyDetail(data);
+  } catch (error) {
+    if (version !== loyaltyState.detailVersion) return;
+
+    $('#loyalty-detail-content').replaceChildren(
+      element('p', error.message, 'detail-error')
+    );
+  }
+}
+
+function renderLoyaltyDetail(data) {
+  const customer = data.customer;
+  const changes = data.changes || [];
+  const count = Number(data.completed) || 0;
+  const discountNext = count % 2 === 1;
+
+  $('#loyalty-detail-name').textContent = customer.name;
+  $('#loyalty-detail-subtitle').textContent =
+    customer.vehicle || 'Klantgegevens';
+
+  const root = $('#loyalty-detail-content');
+  root.replaceChildren();
+
+  const information = element(
+    'section',
+    undefined,
+    'detail-section'
+  );
+
+  information.append(element('h3', 'Klantgegevens'));
+
+  const grid = element('div', undefined, 'loyalty-info-grid');
+
+  grid.append(
+    loyaltyField('E-mail', customer.email),
+    loyaltyField('Telefoon', customer.phone),
+    loyaltyField('Voertuig', customer.vehicle),
+    loyaltyField('Nummerplaat', customer.license_plate)
+  );
+
+  information.append(grid);
+  root.append(information);
+
+  const progress = element(
+    'section',
+    undefined,
+    'detail-section'
+  );
+
+  progress.append(
+    element('h3', 'C&B Wisselvoordeel'),
+    element(
+      'p',
+      count + ' uitgevoerde bandenwissel(s)',
+      'loyalty-count'
+    ),
+    element(
+      'p',
+      discountNext
+        ? 'Bij de volgende wissel krijgt deze klant 10% korting op de wisseldienst.'
+        : 'Bij de volgende wissel geldt het normale tarief. Daarna volgt 10% korting.',
+      'loyalty-hint'
+    )
+  );
+
+  root.append(progress);
+
+  const register = element(
+    'section',
+    undefined,
+    'detail-section'
+  );
+
+  register.append(element('h3', 'Bandenwissel registreren'));
+
+  const form = element('form', undefined, 'loyalty-form');
+
+  const label = element(
+    'label',
+    'Prijs van de wisseldienst (€)'
+  );
+
+  const input = element('input');
+  input.type = 'number';
+  input.min = '0';
+  input.max = '10000';
+  input.step = '0.01';
+  input.required = true;
+  input.placeholder = 'Bijvoorbeeld 60.00';
+
+  const preview = element(
+    'p',
+    '',
+    'loyalty-price-preview'
+  );
+
+  const errorBox = element(
+    'p',
+    '',
+    'detail-error'
+  );
+
+  errorBox.setAttribute('role', 'alert');
+
+  const save = element(
+    'button',
+    'Uitgevoerde wissel registreren',
+    'button'
+  );
+
+  save.type = 'submit';
+
+  function updatePreview() {
+    const price = Number(input.value);
+
+    if (
+      !input.value ||
+      !Number.isFinite(price) ||
+      price < 0
+    ) {
+      preview.textContent = '';
+      return;
+    }
+
+    const cents = Math.round(price * 100);
+    const discount = discountNext
+      ? Math.round(cents * 0.1)
+      : 0;
+
+    preview.textContent =
+      'Wisseldienst: ' + loyaltyMoney(cents) +
+      ' · Korting: ' + loyaltyMoney(discount) +
+      ' · Totaal: ' + loyaltyMoney(cents - discount);
+  }
+
+  input.addEventListener('input', updatePreview);
+
+  let operationId = crypto.randomUUID();
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const price = Number(input.value);
+
+    if (
+      !Number.isFinite(price) ||
+      price < 0 ||
+      price > 10000 ||
+      !/^\d+(?:[.,]\d{1,2})?$/.test(input.value)
+    ) {
+      errorBox.textContent =
+        'Vul een geldig bedrag met maximaal twee decimalen in.';
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Bevestig dat deze bandenwissel daadwerkelijk is uitgevoerd. ' +
+      'De registratie telt mee voor het loyaliteitsvoordeel.'
+    );
+
+    if (!confirmed) return;
+
+    save.disabled = true;
+    errorBox.textContent = '';
+
+    try {
+      const result = await api('loyalty/change', {
+        customer_id: customer.id,
+        operation_id: operationId,
+        price
+      });
+
+      if (result.duplicate) {
+        notify('Deze wissel was al geregistreerd.');
+      } else {
+        notify(
+          'Wissel geregistreerd · korting ' +
+          loyaltyMoney(result.change.discount_cents)
+        );
+      }
+
+      operationId = crypto.randomUUID();
+
+      await loadLoyalty();
+      await openLoyaltyCustomer(customer.id);
+    } catch (error) {
+      errorBox.textContent = error.message;
+      if (error.status === 401 || error.status === 403) {
+        alertError(error);
+      }
+    } finally {
+      save.disabled = false;
+    }
+  });
+
+  form.append(
+    label,
+    input,
+    preview,
+    element(
+      'p',
+      'Registreer uitsluitend een werkelijk uitgevoerde wisseldienst. ' +
+      'Banden en andere producten tellen niet mee voor de korting.',
+      'loyalty-hint'
+    ),
+    errorBox,
+    save
+  );
+
+  register.append(form);
+  root.append(register);
+
+  const history = element(
+    'section',
+    undefined,
+    'detail-section'
+  );
+
+  history.append(element('h3', 'Geschiedenis'));
+
+  if (!changes.length) {
+    history.append(
+      element(
+        'p',
+        'Nog geen bandenwissels geregistreerd.',
+        'loyalty-hint'
+      )
+    );
+  }
+
+  changes.forEach((change, index) => {
+    const number = changes.length - index;
+
+    const item = element(
+      'article',
+      undefined,
+      'loyalty-history-item'
+    );
+
+    item.append(
+      element(
+        'strong',
+        'Wissel ' + number +
+        (change.discount_percent === 10
+          ? ' · 10% korting'
+          : '')
+      ),
+      element(
+        'small',
+        timestamp(change.performed_at)
+      ),
+      element(
+        'p',
+        'Dienst: ' +
+        loyaltyMoney(change.service_price_cents) +
+        ' · Korting: ' +
+        loyaltyMoney(change.discount_cents) +
+        ' · Totaal: ' +
+        loyaltyMoney(change.final_price_cents)
+      ),
+      element(
+        'small',
+        'Geregistreerd door ' + change.created_by
+      )
+    );
+
+    history.append(item);
+  });
+
+  root.append(history);
+}
+
+$('#loyalty-refresh').addEventListener(
+  'click',
+  loadLoyalty
+);
+
+$('#loyalty-search').addEventListener(
+  'input',
+  renderLoyaltyCustomers
+);
+
+$('#loyalty-close').addEventListener('click', () => {
+  $('#loyalty-detail').close();
+});
+
+$('#loyalty-detail').addEventListener('close', () => {
+  loyaltyState.selected = null;
+  loyaltyState.detailVersion++;
+  $('#loyalty-detail-content').replaceChildren();
+});
+
+$('#loyalty-customer-form').addEventListener(
+  'submit',
+  async event => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const save = $('#loyalty-add');
+    const errorBox = $('#loyalty-form-error');
+
+    const data = {
+      name: $('#loyalty-name').value.trim(),
+      email: $('#loyalty-email').value.trim(),
+      phone: $('#loyalty-phone').value.trim(),
+      vehicle: $('#loyalty-vehicle').value.trim(),
+      license_plate: $('#loyalty-plate').value.trim()
+    };
+
+    errorBox.textContent = '';
+
+    if (!data.name || (!data.email && !data.phone)) {
+      errorBox.textContent =
+        'Vul een naam en e-mail of telefoonnummer in.';
+      return;
+    }
+
+    save.disabled = true;
+
+    try {
+      await api('loyalty/customers', data);
+
+      form.reset();
+      notify('Klant toegevoegd');
+
+      await loadLoyalty();
+    } catch (error) {
+      errorBox.textContent = error.message;
+      if (error.status === 401 || error.status === 403) {
+        alertError(error);
+      }
+    } finally {
+      save.disabled = false;
+    }
+  }
+);
+
