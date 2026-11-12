@@ -163,8 +163,7 @@ async function supabase(
 
         signal: AbortSignal.timeout(8000),
 
-        redirect: 'manual'
-      }
+redirect: 'manual'      }
     );
   } catch (error) {
     console.error('Supabase-verbindingsfout:', {
