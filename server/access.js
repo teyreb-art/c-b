@@ -42,7 +42,14 @@ async function supabase(cfg, path, { token, data, method } = {}) {
       body: data ? JSON.stringify(data) : undefined,
       signal: AbortSignal.timeout(8000), redirect: 'error'
     });
-  } catch { throw problem('Supabase is tijdelijk niet bereikbaar. Probeer opnieuw.', 503); }
+  }  catch (error) {
+  console.error('Supabase-verbindingsfout:', {
+    name: error?.name,
+    message: error?.message
+  });
+
+  throw problem('Supabase is tijdelijk niet bereikbaar. Probeer opnieuw.', 503);
+} }
   if (response.status === 429) throw problem('Te veel inlogpogingen. Probeer later opnieuw.', 429);
   if (response.status >= 500) throw problem('Inloggen is tijdelijk niet beschikbaar. Probeer opnieuw.', 503);
   let result = {};
