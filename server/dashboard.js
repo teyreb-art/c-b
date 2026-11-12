@@ -119,7 +119,8 @@ export async function handleDashboard(req, env) {
     }
     if (!env.DB) throw problem('De database is nog niet gekoppeld.', 503);
     if (path === '/api/dashboard/me' && req.method === 'GET') return json({ user });
-    
+    const loyalty = await handleLoyalty(req, env, user);
+if (loyalty) return loyalty;
     // DASHBOARDSTATISTIEKEN
     if (path === '/api/dashboard/overview' && req.method === 'GET') {
       const result = await env.DB.prepare(`
