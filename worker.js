@@ -1,4 +1,4 @@
-
+import { handleDashboard } from './server/dashboard.js';
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -11,6 +11,8 @@ const json = (data, status = 200) =>
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const dashboard = await handleDashboard(request, env);
+    if (dashboard) return dashboard;
 
     if (url.pathname === "/api/health") {
       return json({

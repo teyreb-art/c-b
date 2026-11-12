@@ -1,0 +1,9 @@
+{
+  "name": "cb-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build-static.mjs",
+    "test": "node --test tests/*.test.js"
+  }
+}

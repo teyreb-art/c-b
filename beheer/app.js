@@ -1,0 +1,190 @@
+const $ = selector => document.querySelector(selector);
+const labels = ['nieuw', 'in behandeling', 'afgerond', 'geannuleerd'];
+const state = { user: null, view: 'requests', status: '', q: '', page: 0, activityPage: 0, selected: null, listVersion: 0, detailVersion: 0 };
+const date = value => value ? new Intl.DateTimeFormat('nl-BE', { dateStyle: 'medium', timeZone: 'Europe/Brussels' }).format(new Date(value.length === 10 ? value + 'T12:00:00Z' : value)) : 'Te bespreken';
+const timestamp = value => new Intl.DateTimeFormat('nl-BE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Brussels' }).format(new Date(value));
+const capitalize = value => value.charAt(0).toUpperCase() + value.slice(1);
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  if (text !== undefined) node.textContent = text;
+  if (className) node.className = className;
+  return node;
+}
+function notify(message) {
+  $('#toast').textContent = message; $('#toast').hidden = false;
+  clearTimeout(notify.timer); notify.timer = setTimeout(() => { $('#toast').hidden = true; }, 3500);
+}
+function alertError(error) {
+  const box = $('#page-alert'); box.replaceChildren(element('span', error.message)); box.hidden = false;
+  if (error.status === 401 || error.status === 403) {
+    const link = element('a', 'Opnieuw inloggen'); link.href = '/beheer/inloggen'; box.append(link);
+    $('#request-rows').replaceChildren(); state.selected = null;
+    $('#detail').close(); $('#activity-list').replaceChildren();
+    for (const id of ['#stat-new', '#stat-progress', '#stat-done']) $(id).textContent = '—';
+  }
+}
+async function api(path, data) {
+  let response;
+  try {
+    response = await fetch('/api/dashboard/' + path, { method: data ? 'POST' : 'GET', credentials: 'same-origin', redirect: 'error', headers: data ? { 'Content-Type': 'application/json' } : {}, body: data ? JSON.stringify(data) : undefined });
+  } catch { throw Object.assign(new Error('De verbinding is onderbroken. Controleer je internetverbinding en probeer opnieuw.'), { status: 503 }); }
+  let result;
+  try { result = await response.json(); } catch { throw Object.assign(new Error('Je sessie is verlopen. Log opnieuw in.'), { status: 401 }); }
+  if (!response.ok) throw Object.assign(new Error(result.error || 'De gegevens konden niet worden geladen.'), { status: response.status });
+  return result;
+}
+function badge(status) {
+  const types = { nieuw: 'nieuw', 'in behandeling': 'progress', afgerond: 'done' };
+  return element('span', capitalize(status), 'badge badge-' + (types[status] || 'cancelled'));
+}
+function initials(name) { return name.trim().split(/\s+/).slice(0, 2).map(s => s[0]).join('').toUpperCase(); }
+function applyFilters(status) {
+  state.status = status; state.page = 0;
+  document.querySelectorAll('.tabs [data-status]').forEach(button => { const active = button.dataset.status === status; button.classList.toggle('selected', active); button.setAttribute('aria-pressed', String(active)); });
+  loadRequests();
+}
+async function loadRequests() {
+  const version = ++state.listVersion;
+  $('#refresh').disabled = true; $('#result-caption').textContent = 'Aanvragen laden…'; $('#page-alert').hidden = true;
+  try {
+    const data = await api('requests?' + new URLSearchParams({ status: state.status, q: state.q, page: state.page }));
+    if (version !== state.listVersion) return;
+    state.page = data.page;
+    $('#stat-new').textContent = data.stats.nieuw || 0;
+    $('#stat-progress').textContent = data.stats['in behandeling'] || 0;
+    $('#stat-done').textContent = data.stats.afgerond || 0;
+    $('#nav-count').textContent = data.stats.nieuw || 0; $('#nav-count').hidden = !data.stats.nieuw;
+    $('#result-caption').textContent = data.total + (data.total === 1 ? ' aanvraag' : ' aanvragen') + (state.status || state.q ? ' in deze selectie' : ' ontvangen');
+    const rows = $('#request-rows'); rows.replaceChildren();
+    for (const item of data.items) {
+      const row = element('tr');
+      const customer = element('td'), cell = element('div', undefined, 'customer-cell'), text = element('div');
+      const name = element('button', item.name, 'text-button'); name.addEventListener('click', () => openDetail(item.id));
+      text.append(name, element('small', item.email)); cell.append(element('span', initials(item.name), 'customer-avatar'), text); customer.append(cell);
+      const service = element('td'); service.append(element('strong', item.service), element('small', item.vehicle || 'Voertuig te bespreken'));
+      const status = element('td'); status.append(badge(item.status));
+      const action = element('td'), open = element('button', 'Bekijken', 'open-button'); open.setAttribute('aria-label', 'Bekijk aanvraag van ' + item.name); open.addEventListener('click', () => openDetail(item.id)); action.append(open);
+      row.append(customer, service, element('td', date(item.preferred_date)), status, action); rows.append(row);
+    }
+    $('#empty').hidden = data.items.length > 0;
+    $('#empty-copy').textContent = state.status || state.q ? 'Probeer een andere zoekterm of kies een andere status.' : 'Nieuwe aanvragen verschijnen hier zodra iemand het formulier invult.';
+    $('#range').textContent = data.total ? `${data.page * data.pageSize + 1}–${Math.min(data.total, (data.page + 1) * data.pageSize)} van ${data.total}` : '0 aanvragen';
+    $('#previous').disabled = !data.page; $('#next').disabled = (data.page + 1) * data.pageSize >= data.total;
+  } catch (error) { if (version === state.listVersion) { $('#result-caption').textContent = 'Laden mislukt'; alertError(error); } }
+  finally { if (version === state.listVersion) $('#refresh').disabled = false; }
+}
+function detailField(label, value, link) {
+  const dl = element('dl'), dd = element('dd');
+  if (link) { const a = element('a', value); a.href = link; dd.append(a); } else dd.textContent = value || 'Niet ingevuld';
+  dl.append(element('dt', label), dd); return dl;
+}
+function detailSection(title) { const section = element('section', undefined, 'detail-section'); section.append(element('h3', title)); return section; }
+async function openDetail(id) {
+  state.selected = id;
+  const version = ++state.detailVersion;
+  $('#detail-name').textContent = 'Even laden…'; $('#detail-created').textContent = '';
+  $('#detail-content').replaceChildren(element('p', 'De aanvraag wordt opgehaald.'));
+  if (!$('#detail').open) $('#detail').showModal();
+  try {
+    const data = await api('request?' + new URLSearchParams({ id }));
+    if (state.selected !== id || version !== state.detailVersion) return;
+    renderDetail(data);
+  } catch (error) {
+    if (version !== state.detailVersion) return;
+    if (error.status === 401 || error.status === 403) { alertError(error); return; }
+    $('#detail-name').textContent = 'Aanvraag'; $('#detail-content').replaceChildren(element('p', error.message, 'detail-error'));
+  }
+}
+function renderDetail({ item, notes, history }) {
+  $('#detail-name').textContent = item.name; $('#detail-created').textContent = 'Ontvangen op ' + timestamp(item.created_at);
+  const root = $('#detail-content'); root.replaceChildren();
+  const customer = detailSection('Klantgegevens'), grid = element('div', undefined, 'detail-grid');
+  const phone = item.phone.replace(/[^+\d]/g, '');
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(item.email);
+  grid.append(detailField('E-mail', item.email, emailValid ? 'mailto:' + encodeURIComponent(item.email) : null), detailField('Telefoon', item.phone, phone ? 'tel:' + phone : null), detailField('Voertuig / nummerplaat', item.vehicle), detailField('Voorkeursdatum', date(item.preferred_date)));
+  customer.append(grid); root.append(customer);
+  const request = detailSection('De vraag');
+  request.append(detailField('Dienst', item.service), element('p', item.message || 'Geen extra opmerkingen.', 'detail-copy'), detailField('Bandenselectie', item.selection));
+  if (item.indicative_total !== null) { const price = new Intl.NumberFormat('nl-BE', { style: 'currency', currency: 'EUR' }).format(item.indicative_total); request.append(element('p', price + ' · Door bezoeker berekende indicatie, geen offerte.', 'detail-copy')); }
+  root.append(request);
+  const statusSection = detailSection('Opvolging'), form = element('form', undefined, 'status-form');
+  const statusLabel = element('label', 'Status van deze aanvraag'); statusLabel.htmlFor = 'detail-status';
+  const row = element('div', undefined, 'status-row'), select = element('select'); select.id = 'detail-status';
+  for (const status of labels) { const option = element('option', capitalize(status)); option.value = status; option.selected = item.status === status; select.append(option); }
+  const save = element('button', 'Opslaan', 'button'); save.type = 'submit'; row.append(select, save);
+  const errorBox = element('p', '', 'detail-error'); errorBox.setAttribute('role', 'alert');
+  form.append(statusLabel, row, element('p', 'Een statuswijziging verstuurt geen bericht naar de klant.'), errorBox);
+  form.addEventListener('submit', async event => {
+    event.preventDefault(); save.disabled = true; errorBox.textContent = '';
+    try { await api('status', { id: item.id, status: select.value, expectedStatus: item.status }); notify('Status opgeslagen'); await Promise.all([openDetail(item.id), loadRequests()]); }
+    catch (error) { if (error.status === 401 || error.status === 403) alertError(error); else { errorBox.textContent = error.message; if (error.status === 409) { const refresh = element('button', 'Aanvraag vernieuwen', 'button secondary small'); refresh.type = 'button'; refresh.addEventListener('click', () => openDetail(item.id)); errorBox.append(element('br'), refresh); } } }
+    finally { save.disabled = false; }
+  });
+  statusSection.append(form); root.append(statusSection);
+  const noteSection = detailSection('Interne notities');
+  for (const note of notes) { const card = element('article', undefined, 'note'); card.append(element('p', note.body), element('small', (note.author_role === 'upside' ? 'Upside' : 'C&B') + ' · ' + note.author_email + ' · ' + timestamp(note.created_at))); noteSection.append(card); }
+  if (!notes.length) noteSection.append(element('p', 'Nog geen notities toegevoegd.', 'detail-copy'));
+  const noteForm = element('form', undefined, 'note-form'), label = element('label', 'Notitie toevoegen'); label.htmlFor = 'new-note';
+  const textarea = element('textarea'); textarea.id = 'new-note'; textarea.maxLength = 2000; textarea.required = true; textarea.placeholder = 'Bijvoorbeeld: klant gebeld, wacht op bandenmaat.';
+  const add = element('button', 'Notitie bewaren', 'button secondary'); add.type = 'submit';
+  const noteError = element('p', '', 'detail-error'); noteError.setAttribute('role', 'alert');
+  noteForm.append(label, textarea, element('p', 'Alleen zichtbaar voor C&B en Upside. Maximaal 2.000 tekens.'), add, noteError);
+  noteForm.addEventListener('submit', async event => {
+    event.preventDefault(); add.disabled = true; noteError.textContent = '';
+    try { await api('notes', { id: item.id, note: textarea.value }); notify('Notitie bewaard'); await openDetail(item.id); }
+    catch (error) { if (error.status === 401 || error.status === 403) alertError(error); else noteError.textContent = error.message; }
+    finally { add.disabled = false; }
+  });
+  noteSection.append(noteForm); root.append(noteSection);
+  if (history.length) { const section = detailSection('Geschiedenis'); for (const event of history) section.append(renderEvent(event)); root.append(section); }
+}
+function renderEvent(event, withCustomer = false) {
+  const wrapper = element('article', undefined, 'event');
+  const action = event.action === 'status' ? `Status van ${event.old_status} naar ${event.new_status}` : 'Interne notitie toegevoegd';
+  const title = element('p', (withCustomer ? event.name + ' · ' : '') + action);
+  if (withCustomer) { const open = element('button', 'Aanvraag bekijken', 'text-button'); open.addEventListener('click', () => openDetail(event.request_id)); title.append(element('br'), open); }
+  wrapper.append(title, element('small', (event.actor_role === 'upside' ? 'Upside' : 'C&B') + ' · ' + event.actor_email + ' · ' + timestamp(event.created_at))); return wrapper;
+}
+async function loadActivity() {
+  $('#activity-list').replaceChildren(element('p', 'Activiteit laden…'));
+  try {
+    const data = await api('activity?page=' + state.activityPage);
+    $('#activity-list').replaceChildren(...data.items.map(event => renderEvent(event, true)));
+    if (!data.items.length) $('#activity-list').append(element('p', 'Nog geen wijzigingen. Hier zie je later wie een status aanpaste of een notitie toevoegde.', 'detail-copy'));
+    $('#activity-range').textContent = data.total + ' wijzigingen'; $('#activity-prev').disabled = !state.activityPage; $('#activity-next').disabled = (state.activityPage + 1) * data.pageSize >= data.total;
+  } catch (error) { $('#activity-list').replaceChildren(); alertError(error); }
+}
+async function diagnostics() {
+  const root = $('#diagnostics-list'); root.replaceChildren(element('p', 'Verbindingen controleren…'));
+  try {
+    const data = await api('diagnostics'); root.replaceChildren();
+    for (const [label, value] of [['Database', data.database ? 'Verbonden' : 'Niet verbonden'], ['Dashboardtabellen', data.migrations ? 'Ingesteld' : 'Migratie nog uitvoeren'], ['Persoonlijke toegang', 'Gecontroleerd'], ['Versie', data.version]]) { const row = element('div', undefined, 'diagnostic-row'); row.append(element('span', label), element('strong', value)); root.append(row); }
+    root.append(element('p', 'Gecontroleerd op ' + timestamp(data.checkedAt)), element('p', 'De website bewaart aanvragen in D1. Dit dashboard verstuurt geen e-mails en bevestigt geen afspraken.'));
+  } catch (error) { root.replaceChildren(); alertError(error); }
+}
+function setView(view) {
+  if (view === 'diagnostics' && state.user?.role !== 'upside') return;
+  state.view = view; $('#page-alert').hidden = true;
+  for (const name of ['requests', 'activity', 'diagnostics']) $('#' + name + '-view').hidden = name !== view;
+  document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === view));
+  if (view === 'requests') loadRequests(); if (view === 'activity') loadActivity(); if (view === 'diagnostics') diagnostics();
+}
+document.querySelectorAll('[data-status]').forEach(button => button.addEventListener('click', () => applyFilters(button.dataset.status)));
+document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
+$('#refresh').addEventListener('click', () => loadRequests());
+$('#logout').addEventListener('click', async () => {
+  $('#logout').disabled = true;
+  try { await api('auth/logout', {}); window.location.replace('/beheer/inloggen'); }
+  catch (error) { alertError(error); $('#logout').disabled = false; }
+});
+$('#previous').addEventListener('click', () => { state.page--; loadRequests(); }); $('#next').addEventListener('click', () => { state.page++; loadRequests(); });
+$('#activity-prev').addEventListener('click', () => { state.activityPage--; loadActivity(); }); $('#activity-next').addEventListener('click', () => { state.activityPage++; loadActivity(); });
+let searchTimer; $('#search').addEventListener('input', event => { state.q = event.target.value; state.page = 0; clearTimeout(searchTimer); searchTimer = setTimeout(loadRequests, 250); });
+$('#close-detail').addEventListener('click', () => $('#detail').close());
+$('#detail').addEventListener('close', () => { state.selected = null; state.detailVersion++; $('#detail-content').replaceChildren(); });
+$('#today').textContent = new Intl.DateTimeFormat('nl-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Brussels' }).format(new Date());
+try {
+  const { user } = await api('me'); state.user = user;
+  $('#account-name').textContent = user.name; $('#account-email').textContent = user.email; $('#avatar').textContent = user.role === 'upside' ? 'UP' : 'CB'; $('#tech-nav').hidden = user.role !== 'upside';
+  await loadRequests();
+} catch (error) { $('#account-name').textContent = 'Geen actieve sessie'; $('#result-caption').textContent = 'Log in om aanvragen te bekijken.'; alertError(error); }

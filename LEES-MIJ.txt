@@ -1,32 +1,28 @@
-C&B BANDEN CENTRALE - EENVOUDIGE WEBSITE
+C&B WEBSITE + DASHBOARD
 
-Alleen HTML, CSS, JavaScript en twee afbeeldingen. Geen npm, geen buildproces, geen Wrangler, geen database en geen aanmeldaccount.
+Dit pakket bevat de bestaande C&B-website en een dashboard op /beheer/.
+Het gebruikt jouw bestaande Cloudflare Worker en D1-database.
 
-PUBLICEREN
-1. Pak deze ZIP volledig uit.
-2. Cloudflare Pages > maak een Pages-project > Upload assets / Direct Upload.
-3. Upload de uitgepakte map met index.html, style.css, script.js en de map assets.
-4. Publiceer. index.html moet direct bovenaan in de geuploade map staan.
+START HIER
+Open DASHBOARD-INSTELLEN.md voor de volledige stappen.
 
-Je kunt index.html ook rechtstreeks op je computer openen om de website te bekijken.
+1. Voeg de dashboardtabellen toe met migrations/0002_dashboard.sql.
+2. Stel Cloudflare Access in voor twee persoonlijke e-mailadressen.
+3. Voeg de vier toegangsvariabelen toe bij je bestaande Worker.
+4. Upload de bestanden via je bestaande GitHub-repository.
+5. Controleer de nieuwe publicatie en log in via /beheer/.
 
-FUNCTIES
-- Responsive website met geel-zwarte C&B-huisstijl en nieuw logo.
-- Bandenzoeker met maat, seizoen en drie voorbeeldopties.
-- Aanpasbare prijsberekening.
-- Downloadbare afspraak-/offerteaanvraag als tekstbestand.
-- Downloadbare agenda-herinnering voor bandenwissel.
-- Telefoon- en routelinks en veelgestelde vragen.
+De code is lokaal getest, maar is nog niet op jouw accounts gepubliceerd.
+Er zitten geen wachtwoorden, echte klantgegevens of testsessies in dit pakket.
 
-BELANGRIJK
-De bandenopties en prijzen zijn voorbeelden. Er is geen actuele voorraadkoppeling.
-Er worden geen aanvragen verstuurd en geen afspraken gereserveerd.
-De bezoeker downloadt de aanvraag en belt C&B om die te bespreken.
-De agenda-herinnering is geen automatische e-maildienst.
-Echte online boekingen, formulieren die berichten versturen en betalingen kunnen later met een aparte dienst gekoppeld worden.
-Geen contactgegevens worden op een server bewaard door deze code.
-De fonts laden via Google Fonts; zonder internet worden systeemfonts gebruikt.
+Inbegrepen: aanvragen bekijken en zoeken, statusfilters, interne notities,
+activiteitenlog en een technische controlepagina voor Upside.
 
-Aanpassen: index.html (inhoud), style.css (ontwerp), script.js (functies), assets (afbeeldingen).
+De publieke websitebestanden zijn meegenomen uit de opgehaalde bronversie.
+Heb je deze daarna aangepast? Behoud jouw nieuwere index.html, style.css,
+script.js en assets; die bestanden hoeven voor het dashboard niet te wijzigen.
 
-nieuwe regel
+Testen met Node.js 24: npm test
+Publieke bestanden bouwen: npm run build
+
+Een statuswijziging verstuurt geen e-mail en bevestigt geen afspraak.

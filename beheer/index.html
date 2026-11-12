@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="nl-BE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#24272b">
+  <title>C&B · Beheer</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/beheer/style.css">
+  <script src="/beheer/app.js" type="module"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Naar inhoud</a>
+  <aside class="sidebar">
+    <a class="brand" href="/beheer/" aria-label="C&B beheer"><span class="brand-mark">C&B</span><span>BANDEN CENTRALE<small>WETTEREN</small></span></a>
+    <div class="nav-label">WERKPLAATS</div>
+    <nav aria-label="Dashboard">
+      <button class="nav-item active" data-view="requests"><span class="nav-icon">▤</span>Aanvragen<span id="nav-count" class="nav-count" hidden></span></button>
+      <button class="nav-item" data-view="activity"><span class="nav-icon">◷</span>Activiteit</button>
+      <button class="nav-item" data-view="diagnostics" id="tech-nav" hidden><span class="nav-icon">⚙</span>Technische controle</button>
+    </nav>
+    <div class="sidebar-bottom"><a href="/" target="_blank" rel="noopener">Website bekijken <span>↗</span></a><p>Beheer door <strong>upside<span>.</span></strong></p></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span>WERKPLAATSBEHEER</span><div class="account"><span id="avatar" class="avatar">…</span><div><strong id="account-name">Even laden</strong><small id="account-email">Persoonlijke toegang</small></div><button type="button" id="logout" class="logout">Uitloggen</button></div></header>
+    <main id="main" tabindex="-1">
+      <div id="page-alert" class="alert" role="alert" hidden></div>
+      <section id="requests-view">
+        <div class="page-heading"><div><p class="eyebrow" id="today">C&B BANDEN CENTRALE</p><h1>Goed geregeld.</h1><p>Alle aanvragen op één plek. Van eerste vraag tot afgewerkte klus.</p></div><button id="refresh" class="button secondary"><span aria-hidden="true">↻</span> Vernieuwen</button></div>
+        <div class="stats" aria-label="Overzicht aanvragen">
+          <button class="stat" data-status="nieuw"><span class="stat-label"><i class="dot yellow"></i> Nieuwe aanvragen</span><strong id="stat-new">—</strong><small>Klaar voor een eerste reactie</small></button>
+          <button class="stat" data-status="in behandeling"><span class="stat-label"><i class="dot blue"></i> In behandeling</span><strong id="stat-progress">—</strong><small>In overleg met de klant</small></button>
+          <button class="stat" data-status="afgerond"><span class="stat-label"><i class="dot green"></i> Afgerond</span><strong id="stat-done">—</strong><small>Opgevolgd en afgewerkt</small></button>
+        </div>
+        <section class="panel" aria-labelledby="requests-title">
+          <div class="panel-heading"><div><h2 id="requests-title">Aanvragen</h2><p id="result-caption" role="status">Aanvragen laden…</p></div><span class="source-label"><i class="dot green"></i> Via de website</span></div>
+          <div class="filters"><div class="tabs" role="group" aria-label="Filter op status"><button data-status="" class="selected" aria-pressed="true">Alle</button><button data-status="nieuw" aria-pressed="false">Nieuw</button><button data-status="in behandeling" aria-pressed="false">In behandeling</button><button data-status="afgerond" aria-pressed="false">Afgerond</button><button data-status="geannuleerd" aria-pressed="false">Geannuleerd</button></div><label class="search"><span aria-hidden="true">⌕</span><span class="sr-only">Zoek op naam, e-mail, telefoon of voertuig</span><input id="search" type="search" placeholder="Zoek een klant of voertuig…" maxlength="100" autocomplete="off"></label></div>
+          <div class="table-wrap"><table><thead><tr><th>Klant</th><th>Dienst & voertuig</th><th>Voorkeursdatum</th><th>Status</th><th><span class="sr-only">Details</span></th></tr></thead><tbody id="request-rows"></tbody></table></div>
+          <div class="empty" id="empty" hidden><span class="empty-icon">▤</span><h3 id="empty-title">Geen aanvragen gevonden</h3><p id="empty-copy">Nieuwe aanvragen verschijnen hier zodra iemand het formulier invult.</p></div>
+          <div class="pagination"><span id="range">—</span><div><button id="previous" class="button secondary small" disabled>Vorige</button><button id="next" class="button secondary small" disabled>Volgende</button></div></div>
+        </section>
+        <p class="footnote">Een voorkeursdatum is een aanvraag. Spreek de afspraak rechtstreeks met de klant af.</p>
+      </section>
+      <section id="activity-view" hidden><div class="page-heading"><div><p class="eyebrow">SAMEN OPVOLGEN</p><h1>Wie deed wat?</h1><p>Statuswijzigingen en notities van C&B en Upside.</p></div></div><div class="panel activity-panel"><h2>Laatste activiteit</h2><div id="activity-list"></div><div class="pagination"><span id="activity-range"></span><div><button id="activity-prev" class="button secondary small">Vorige</button><button id="activity-next" class="button secondary small">Volgende</button></div></div></div></section>
+      <section id="diagnostics-view" hidden><div class="page-heading"><div><p class="eyebrow">UPSIDE AGENCY</p><h1>Technische controle.</h1><p>Controleer of de verbindingen voor het dashboard werken.</p></div></div><div id="diagnostics-list" class="panel diagnostics"></div></section>
+      <footer class="workspace-footer">C&B Banden Centrale Wetteren <span>Gebouwd met Upside Agency</span></footer>
+    </main>
+  </div>
+  <dialog id="detail" aria-labelledby="detail-name"><div class="drawer-header"><div><p class="eyebrow">AANVRAAG</p><h2 id="detail-name">Klantgegevens</h2><p id="detail-created"></p></div><button id="close-detail" class="close" aria-label="Sluit klantdetails">×</button></div><div id="detail-content"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
