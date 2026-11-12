@@ -34,6 +34,11 @@
         Kalender
       </button>
 
+      <button class="nav-item" data-view="loyalty">
+        <span class="nav-icon">◎</span>
+        Klanten &amp; loyaliteit
+      </button>
+
       <button class="nav-item" data-view="activity">
         <span class="nav-icon">◷</span>
         Activiteit
@@ -168,7 +173,7 @@
               <thead>
                 <tr>
                   <th>Klant</th>
-                  <th>Dienst & voertuig</th>
+                  <th>Dienst &amp; voertuig</th>
                   <th>Voorkeursdatum</th>
                   <th>Status</th>
                   <th><span class="sr-only">Details</span></th>
@@ -235,6 +240,105 @@
         </div>
       </section>
 
+      <section id="loyalty-view" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">C&amp;B WISSELVOORDEEL</p>
+            <h1>Klanten &amp; loyaliteit.</h1>
+            <p>Elke tweede uitgevoerde bandenwissel: 10% korting op de wisseldienst.</p>
+          </div>
+          <button id="loyalty-refresh" class="button secondary" type="button">Vernieuwen</button>
+        </div>
+
+        <div class="demo-notice">
+          TESTOMGEVING · GEEN AUTOMATISCHE HERINNERINGSMAILS
+        </div>
+
+        <div class="loyalty-summary">
+          <div class="stat stat-information">
+            <span class="stat-label">Geregistreerde klanten</span>
+            <strong id="loyalty-total">—</strong>
+            <small>In het loyaliteitsprogramma</small>
+          </div>
+
+          <div class="stat stat-information">
+            <span class="stat-label">Klaar voor 10% korting</span>
+            <strong id="loyalty-ready">—</strong>
+            <small>Bij de volgende wissel</small>
+          </div>
+        </div>
+
+        <section class="panel loyalty-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Klanten</h2>
+              <p id="loyalty-caption">Klanten laden…</p>
+            </div>
+          </div>
+
+          <div class="loyalty-layout">
+            <form id="loyalty-customer-form" class="loyalty-form">
+              <h3>Nieuwe klant</h3>
+
+              <label for="loyalty-name">Naam *</label>
+              <input id="loyalty-name" name="name" maxlength="150" required autocomplete="name">
+
+              <label for="loyalty-email">E-mail</label>
+              <input id="loyalty-email" name="email" type="email" maxlength="254" autocomplete="email">
+
+              <label for="loyalty-phone">Telefoon</label>
+              <input id="loyalty-phone" name="phone" type="tel" maxlength="40" autocomplete="tel">
+
+              <label for="loyalty-vehicle">Voertuig</label>
+              <input id="loyalty-vehicle" name="vehicle" maxlength="150">
+
+              <label for="loyalty-plate">Nummerplaat</label>
+              <input id="loyalty-plate" name="license_plate" maxlength="30">
+
+              <p class="loyalty-hint">
+                Naam en minstens e-mail of telefoon zijn verplicht.
+                Voeg alleen testgegevens toe.
+              </p>
+
+              <p id="loyalty-form-error" class="detail-error" role="alert"></p>
+              <button id="loyalty-add" class="button" type="submit">
+                Klant toevoegen
+              </button>
+            </form>
+
+            <div class="loyalty-list-area">
+              <label for="loyalty-search" class="sr-only">Zoek klanten</label>
+              <input
+                id="loyalty-search"
+                class="loyalty-search"
+                type="search"
+                placeholder="Zoek op naam, e-mail of voertuig…"
+                autocomplete="off"
+              >
+
+              <div class="table-wrap">
+                <table class="loyalty-table">
+                  <thead>
+                    <tr>
+                      <th>Klant</th>
+                      <th>Voertuig</th>
+                      <th>Wissels</th>
+                      <th>Volgend voordeel</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="loyalty-rows"></tbody>
+                </table>
+              </div>
+
+              <p id="loyalty-empty" class="loyalty-hint" hidden>
+                Er zijn nog geen klanten gevonden.
+              </p>
+            </div>
+          </div>
+        </section>
+      </section>
+
       <section id="activity-view" hidden>
         <div class="page-heading">
           <div>
@@ -297,6 +401,25 @@
     </div>
 
     <div id="detail-content"></div>
+  </dialog>
+
+  <dialog id="loyalty-detail" aria-labelledby="loyalty-detail-name">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">C&amp;B WISSELVOORDEEL</p>
+        <h2 id="loyalty-detail-name">Klant</h2>
+        <p id="loyalty-detail-subtitle"></p>
+      </div>
+
+      <button
+        type="button"
+        id="loyalty-close"
+        class="close"
+        aria-label="Sluiten"
+      >×</button>
+    </div>
+
+    <div id="loyalty-detail-content" class="loyalty-detail-content"></div>
   </dialog>
 
   <div id="toast" class="toast" role="status" hidden></div>
