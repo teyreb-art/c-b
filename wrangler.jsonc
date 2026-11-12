@@ -7,5 +7,12 @@
     "directory": "./",
     "binding": "ASSETS",
     "run_worker_first": ["/api/*"]
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cb-banden-db",
+      "database_id": "VUL_HIER_JE_DATABASE_ID_IN"
+    }
+  ]
 }
