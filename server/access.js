@@ -49,7 +49,7 @@ async function supabase(cfg, path, { token, data, method } = {}) {
   });
 
   throw problem('Supabase is tijdelijk niet bereikbaar. Probeer opnieuw.', 503);
-} }
+} 
   if (response.status === 429) throw problem('Te veel inlogpogingen. Probeer later opnieuw.', 429);
   if (response.status >= 500) throw problem('Inloggen is tijdelijk niet beschikbaar. Probeer opnieuw.', 503);
   let result = {};
