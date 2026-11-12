@@ -176,3 +176,268 @@
     padding: 8px 2px;
   }
 }
+
+/* =========================================
+   C&B WISSELVOORDEEL
+   Klanten en loyaliteit
+========================================= */
+
+.loyalty-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 25px;
+}
+
+.loyalty-summary .stat {
+  min-height: 135px;
+}
+
+.loyalty-panel {
+  margin-bottom: 25px;
+}
+
+.loyalty-layout {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  border-top: 1px solid var(--line);
+}
+
+.loyalty-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.loyalty-layout > .loyalty-form {
+  padding: 25px;
+  border-right: 1px solid var(--line);
+  background: #fafbfc;
+}
+
+.loyalty-form h3 {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.loyalty-form label {
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.loyalty-form input {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 12px;
+  border: 1px solid #d9dde2;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.loyalty-form input:focus {
+  outline: 2px solid #9f8500;
+  outline-offset: 1px;
+}
+
+.loyalty-form .button {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.loyalty-hint {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 8px 0;
+}
+
+.loyalty-list-area {
+  min-width: 0;
+  padding: 24px 0;
+}
+
+.loyalty-search {
+  display: block;
+  width: calc(100% - 48px);
+  margin: 0 24px 22px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: white;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.loyalty-table {
+  width: 100%;
+}
+
+.loyalty-table th,
+.loyalty-table td {
+  padding: 15px 14px;
+}
+
+.loyalty-table td {
+  vertical-align: middle;
+}
+
+.loyalty-table td small {
+  overflow-wrap: anywhere;
+}
+
+#loyalty-empty {
+  padding: 25px;
+  text-align: center;
+}
+
+.loyalty-detail-content {
+  padding: 26px 30px;
+}
+
+.loyalty-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.loyalty-info-field {
+  min-width: 0;
+}
+
+.loyalty-info-field small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.loyalty-info-field strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.loyalty-count {
+  display: inline-block;
+  background: #fff7cc;
+  color: #6f5d00;
+  padding: 9px 13px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 8px 0;
+}
+
+.loyalty-price-preview {
+  background: #fffbe6;
+  border-left: 3px solid var(--yellow);
+  padding: 13px;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.8;
+  margin: 5px 0;
+}
+
+.loyalty-price-preview:empty {
+  display: none;
+}
+
+.loyalty-history-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.loyalty-history-item:last-child {
+  border-bottom: 0;
+}
+
+.loyalty-history-item strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.loyalty-history-item small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.loyalty-history-item p {
+  font-size: 12px;
+  margin: 8px 0;
+  line-height: 1.7;
+}
+
+@media (max-width: 1100px) {
+  .loyalty-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .loyalty-layout > .loyalty-form {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 760px) {
+  .loyalty-summary {
+    gap: 10px;
+  }
+
+  .loyalty-summary .stat {
+    padding: 15px;
+    min-height: 105px;
+  }
+
+  .loyalty-summary .stat strong {
+    font-size: 28px;
+  }
+
+  .loyalty-layout > .loyalty-form {
+    padding: 20px;
+  }
+
+  .loyalty-list-area {
+    padding: 18px 0;
+  }
+
+  .loyalty-search {
+    width: calc(100% - 36px);
+    margin: 0 18px 18px;
+  }
+
+  .loyalty-table {
+    min-width: 570px;
+  }
+
+  .loyalty-table th,
+  .loyalty-table td {
+    display: table-cell;
+    width: auto;
+    padding: 12px;
+  }
+
+  .loyalty-table .customer-avatar {
+    display: none;
+  }
+
+  .loyalty-detail-content {
+    padding: 22px;
+  }
+
+  .loyalty-info-grid {
+    gap: 15px;
+  }
+
+  .loyalty-form input {
+    font-size: 16px;
+  }
+}
+
