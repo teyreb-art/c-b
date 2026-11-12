@@ -1,14 +1,457 @@
+
 <!doctype html>
-<html lang="nl-BE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="C&B Banden Centrale Wetteren. Bandenadvies, een prijsindicatie en rechtstreeks contact met jouw bandenspecialist."><title>C&B Banden Centrale Wetteren</title><link rel="icon" href="assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head><body>
-<div class="top"><div class="wrap">Oosterzelesteenweg 7, Wetteren <a href="tel:+3292868936">09 286 89 36</a></div></div>
-<header><div class="wrap nav"><a href="#" aria-label="C&B startpagina"><img src="assets/logo.svg" width="210" height="50" alt="C&B Banden Centrale Wetteren"></a><nav aria-label="Hoofdnavigatie"><a href="#banden">Banden</a><a href="#diensten">Diensten</a><a href="#herinnering">Bandenwissel</a><a class="button" href="#afspraak">Plan je bezoek</a></nav></div></header>
-<main><section class="hero"><div class="wrap"><span class="eyebrow">C&B BANDEN CENTRALE WETTEREN</span><h1>Jouw grip.<br>Onze <em>expertise.</em></h1><p>De juiste banden voor jouw wagen.<br>Persoonlijk advies, dichtbij in Wetteren.</p><div class="actions"><a class="button" href="#banden">Vind jouw banden</a><a class="button outline" href="tel:+3292868936">Bel ons</a></div><a class="rating" href="https://www.google.com/maps/search/?api=1&query=C%26B+Banden+Centrale+Wetteren" target="_blank" rel="noopener">★★★★★ <b>5,0</b><span>136 Google-reviews*</span></a></div></section>
-<section id="banden" class="wrap finder"><div><span class="eyebrow dark">GOED OP WEG BEGINT HIER</span><h2>Welke banden zoek je?</h2><details><summary>Waar vind ik mijn bandenmaat?</summary><p>Op de zijkant van je band staat bijvoorbeeld 205/55 R16: breedte 205, hoogteverhouding 55 en velgmaat 16 inch. De voor- en achterbanden kunnen verschillen.</p></details></div><form id="finder"><label>Breedte<select id="width"><option>195</option><option selected>205</option><option>215</option><option>225</option><option>235</option><option>245</option></select></label><label>Hoogte<select id="aspect"><option>40</option><option>45</option><option>50</option><option selected>55</option><option>60</option><option>65</option></select></label><label>Velgmaat<select id="rim"><option>15</option><option selected>16</option><option>17</option><option>18</option><option>19</option><option>20</option></select></label><label>Type<select id="season"><option>Zomer</option><option>Winter</option><option selected>Vierseizoen</option></select></label><button class="button">Bekijk opties</button></form></section>
-<section class="wrap section" id="results" hidden aria-live="polite"><div class="heading"><div><span class="eyebrow dark">JOUW SELECTIE</span><h2 id="result-title"></h2></div><p>Bespreek je keuze met C&B. De juiste pasvorm en beschikbaarheid worden persoonlijk bevestigd.</p></div><div class="notice">Dit zijn voorbeeldopties en voorbeeldprijzen, geen actuele voorraad of bindende offerte.</div><div class="grid three" id="products"></div></section>
-<section class="wrap section" id="diensten"><div class="heading"><div><span class="eyebrow dark">AANDACHT VOOR JOUW WAGEN</span><h2>Van nieuwe grip<br>tot de laatste controle.</h2></div><p>Een seizoenswissel, nieuwe banden of een band die aandacht nodig heeft. We helpen je op weg.</p></div><div class="grid three"><article class="card"><span class="number">01</span><h3>Banden & montage</h3><p>Bespreek welke banden bij jouw wagen en rijgedrag passen.</p><a href="#afspraak">Vraag advies</a></article><article class="card"><span class="number">02</span><h3>Seizoenswissel</h3><p>Van zomer naar winter, of terug. Vraag naar de mogelijkheden voor jouw wagen.</p><a href="#herinnering">Zet een herinnering</a></article><article class="card"><span class="number">03</span><h3>Herstelling & controle</h3><p>Een lekke band of twijfel over de toestand? Neem contact op voor een professionele beoordeling.</p><a href="tel:+3292868936">Bel de werkplaats</a></article></div></section>
-<section class="dark-section" id="calculator"><div class="wrap split"><div><span class="eyebrow">GEEN VERRASSINGEN</span><h2>Bekijk jouw<br>prijsindicatie.</h2><p>Pas de bedragen aan en bereken het totaal voor je set. C&B bevestigt de echte tarieven.</p><p class="subtle">De ingevulde bedragen zijn voorbeelden, inclusief btw. Voorraad en technische geschiktheid worden niet online gecontroleerd.</p></div><form id="calculator-form" class="panel"><div class="grid two"><label>Bandprijs per stuk (€)<input id="price" type="number" min="0" max="10000" step="0.01" value="85" required></label><label>Aantal banden<select id="quantity"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></label><label>Montage per band (€)<input id="mounting" type="number" min="0" max="1000" step="0.01" value="20" required></label><label>Overige kosten totaal (€)<input id="extras" type="number" min="0" max="1000" step="0.01" value="14" required></label></div><div class="total"><span>Indicatief totaal</span><output id="total" aria-live="polite">€ 434,00</output></div><a href="#afspraak" class="button full">Bespreek deze berekening</a></form></div></section>
-<section class="wrap section split" id="herinnering"><div><span class="eyebrow dark">DENK AAN JE VOLGENDE WISSEL</span><h2>Het juiste seizoen.<br>Op tijd in je agenda.</h2><p>Kies zelf wanneer je aan je bandenwissel wilt denken en zet een herinnering in je eigen agenda.</p><p class="subtle">Je downloadt een agendabestand. Er wordt geen e-mail verstuurd en geen afspraak geboekt.</p></div><form id="reminder-form" class="panel"><label>Waarvoor wil je een herinnering?<select id="reminder-kind"><option>Winterbanden bespreken</option><option>Zomerbanden bespreken</option><option>Banden laten controleren</option></select></label><label>Datum<input id="reminder-date" type="date" required></label><button class="button full">Download agenda-herinnering</button><p class="small">Importeer het bestand in je agenda en controleer of meldingen zijn ingeschakeld.</p></form></section>
-<section id="afspraak" class="soft-section"><div class="wrap section split"><div><span class="eyebrow dark">WE HELPEN JE GRAAG VERDER</span><h2>Plan jouw bezoek.</h2><p>Maak je aanvraag klaar en bel C&B om een moment af te spreken. Je kunt je gegevens ook downloaden om ze bij de hand te houden.</p><a class="phone" href="tel:+3292868936">09 286 89 36</a><p>Oosterzelesteenweg 7<br>9230 Wetteren</p><a class="button secondary" href="https://www.google.com/maps/dir/?api=1&destination=Oosterzelesteenweg+7+9230+Wetteren" target="_blank" rel="noopener">Route naar C&B</a><p class="small">Bel voor de actuele openingsuren en beschikbare momenten.</p></div><form class="panel" id="request-form"><div class="grid two"><label>Je naam<input name="naam" required maxlength="100" autocomplete="name"></label><label>Telefoon<input name="telefoon" type="tel" required maxlength="40" autocomplete="tel"></label></div><label>Voertuig / nummerplaat<input name="voertuig" maxlength="100" placeholder="Bijvoorbeeld VW Golf · 1-ABC-123"></label><div class="grid two"><label>Dienst<select name="dienst"><option>Bandenadvies / offerte</option><option>Bandenwissel</option><option>Montage</option><option>Herstelling / controle</option></select></label><label>Voorkeursdatum<input name="datum" type="date"></label></div><label>Je vraag<textarea name="vraag" id="question" rows="3" maxlength="2000"></textarea></label><button class="button full">Download mijn aanvraag</button><p class="small">Er wordt niets verzonden of gereserveerd. Neem contact op met C&B om je afspraak te bevestigen. Je invoer blijft op je eigen apparaat.</p><p id="request-status" role="status"></p></form></div></section>
-<section class="wrap section faq"><h2>Handig om te weten.</h2><details><summary>Kan ik hier meteen boeken of betalen?</summary><p>Deze eenvoudige website maakt je aanvraag en berekening klaar. Je spreekt het bezoek en de definitieve prijs rechtstreeks met C&B af.</p></details><details><summary>Zijn dit actuele bandenprijzen?</summary><p>Nee. De getoonde opties en vooraf ingevulde bedragen zijn voorbeelden. Vraag C&B naar de actuele merken, voorraad en tarieven.</p></details><details><summary>Worden mijn gegevens bewaard?</summary><p>De website verzendt je formulier niet en slaat je contactgegevens niet op. Een gedownloade aanvraag staat op je eigen apparaat. De agenda-import wordt beheerd door je eigen agenda-app.</p></details></section></main>
-<footer><div class="wrap"><img src="assets/logo.svg" width="240" height="57" alt="C&B Banden Centrale Wetteren"><p>Jouw grip. Onze expertise.</p><a href="tel:+3292868936">09 286 89 36</a><p class="small">*Reviewscore zoals aangeleverd: 5,0 met 136 reviews. Geen live koppeling. Sfeerbeeld is illustratief.</p><small>Website door Upside · <span id="year"></span></small></div></footer>
-</body></html>
+<html lang="nl-BE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="C&B Banden Centrale Wetteren. Bandenadvies, montage, seizoenswissel en een vrijblijvende offerteaanvraag.">
+  <meta name="theme-color" content="#ffda00">
+  <title>C&B Banden Centrale Wetteren</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <span>Oosterzelesteenweg 7, 9230 Wetteren</span>
+    <a href="tel:+3292868936">09 286 89 36</a>
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a href="#home" aria-label="C&B startpagina">
+      <img src="assets/logo.svg" width="210" height="50" alt="C&B Banden Centrale Wetteren">
+    </a>
+
+    <nav aria-label="Hoofdnavigatie">
+      <a href="#banden">Banden</a>
+      <a href="#diensten">Diensten</a>
+      <a href="#herinnering">Bandenwissel</a>
+      <a class="button" href="#afspraak">Vraag een offerte</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero" id="home">
+  <div class="wrap">
+    <span class="eyebrow">C&B BANDEN CENTRALE WETTEREN</span>
+
+    <h1>
+      Jouw grip.<br>
+      Onze <em>expertise.</em>
+    </h1>
+
+    <p>
+      De juiste banden voor jouw wagen.<br>
+      Persoonlijk advies, dichtbij in Wetteren.
+    </p>
+
+    <div class="actions">
+      <a class="button" href="#banden">Vind jouw banden</a>
+      <a class="button outline" href="tel:+3292868936">Bel ons</a>
+    </div>
+
+    <a class="rating"
+       href="https://www.google.com/maps/search/?api=1&query=C%26B+Banden+Centrale+Wetteren"
+       target="_blank"
+       rel="noopener">
+      ★★★★★
+      <b>5,0</b>
+      <span>136 Google-reviews*</span>
+    </a>
+  </div>
+</section>
+
+<section id="banden" class="wrap finder">
+  <div>
+    <span class="eyebrow dark">GOED OP WEG BEGINT HIER</span>
+    <h2>Welke banden zoek je?</h2>
+
+    <details>
+      <summary>Waar vind ik mijn bandenmaat?</summary>
+      <p>
+        Op de zijkant van je band staat bijvoorbeeld 205/55 R16.
+        De voor- en achterbanden kunnen verschillen.
+      </p>
+    </details>
+  </div>
+
+  <form id="finder">
+    <label>
+      Breedte
+      <select id="width">
+        <option>195</option>
+        <option selected>205</option>
+        <option>215</option>
+        <option>225</option>
+        <option>235</option>
+        <option>245</option>
+      </select>
+    </label>
+
+    <label>
+      Hoogte
+      <select id="aspect">
+        <option>40</option>
+        <option>45</option>
+        <option>50</option>
+        <option selected>55</option>
+        <option>60</option>
+        <option>65</option>
+      </select>
+    </label>
+
+    <label>
+      Velgmaat
+      <select id="rim">
+        <option>15</option>
+        <option selected>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+      </select>
+    </label>
+
+    <label>
+      Type
+      <select id="season">
+        <option>Zomer</option>
+        <option>Winter</option>
+        <option selected>Vierseizoen</option>
+      </select>
+    </label>
+
+    <button class="button" type="submit">Bekijk opties</button>
+  </form>
+</section>
+
+<section class="wrap section" id="results" hidden aria-live="polite">
+  <div class="heading">
+    <div>
+      <span class="eyebrow dark">JOUW SELECTIE</span>
+      <h2 id="result-title"></h2>
+    </div>
+    <p>
+      Bespreek je keuze met C&B. De juiste pasvorm en
+      beschikbaarheid worden persoonlijk bevestigd.
+    </p>
+  </div>
+
+  <div class="notice">
+    Dit zijn voorbeeldopties en voorbeeldprijzen,
+    geen actuele voorraad of bindende offerte.
+  </div>
+
+  <div class="grid three" id="products"></div>
+</section>
+
+<section class="wrap section" id="diensten">
+  <div class="heading">
+    <div>
+      <span class="eyebrow dark">AANDACHT VOOR JOUW WAGEN</span>
+      <h2>Van nieuwe grip<br>tot de laatste controle.</h2>
+    </div>
+
+    <p>
+      Een seizoenswissel, nieuwe banden of een band
+      die aandacht nodig heeft. We helpen je op weg.
+    </p>
+  </div>
+
+  <div class="grid three">
+    <article class="card">
+      <span class="number">01</span>
+      <h3>Banden & montage</h3>
+      <p>
+        Bespreek welke banden bij jouw wagen en rijgedrag passen.
+      </p>
+      <a href="#afspraak">Vraag advies</a>
+    </article>
+
+    <article class="card">
+      <span class="number">02</span>
+      <h3>Seizoenswissel</h3>
+      <p>
+        Van zomer naar winter, of terug.
+        Vraag naar de mogelijkheden voor jouw wagen.
+      </p>
+      <a href="#herinnering">Zet een herinnering</a>
+    </article>
+
+    <article class="card">
+      <span class="number">03</span>
+      <h3>Herstelling & controle</h3>
+      <p>
+        Een lekke band of twijfel over de toestand?
+        Neem contact op voor een professionele beoordeling.
+      </p>
+      <a href="tel:+3292868936">Bel de werkplaats</a>
+    </article>
+  </div>
+</section>
+
+<section class="dark-section" id="calculator">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">GEEN VERRASSINGEN</span>
+      <h2>Bekijk jouw<br>prijsindicatie.</h2>
+
+      <p>
+        Pas de bedragen aan en bereken het totaal voor je set.
+        C&B bevestigt de echte tarieven.
+      </p>
+
+      <p class="subtle">
+        De ingevulde bedragen zijn voorbeelden, inclusief btw.
+        Voorraad en technische geschiktheid worden niet online gecontroleerd.
+      </p>
+    </div>
+
+    <form id="calculator-form" class="panel">
+      <div class="grid two">
+        <label>
+          Bandprijs per stuk (€)
+          <input id="price" type="number" min="0" max="10000" step="0.01" value="85" required>
+        </label>
+
+        <label>
+          Aantal banden
+          <select id="quantity">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option selected>4</option>
+          </select>
+        </label>
+
+        <label>
+          Montage per band (€)
+          <input id="mounting" type="number" min="0" max="1000" step="0.01" value="20" required>
+        </label>
+
+        <label>
+          Overige kosten totaal (€)
+          <input id="extras" type="number" min="0" max="1000" step="0.01" value="14" required>
+        </label>
+      </div>
+
+      <div class="total">
+        <span>Indicatief totaal</span>
+        <output id="total" aria-live="polite">€ 434,00</output>
+      </div>
+
+      <a href="#afspraak" class="button full">
+        Bespreek deze berekening
+      </a>
+    </form>
+  </div>
+</section>
+
+<section class="wrap section split" id="herinnering">
+  <div>
+    <span class="eyebrow dark">DENK AAN JE VOLGENDE WISSEL</span>
+    <h2>Het juiste seizoen.<br>Op tijd in je agenda.</h2>
+
+    <p>
+      Kies zelf wanneer je aan je bandenwissel wilt denken
+      en zet een herinnering in je eigen agenda.
+    </p>
+
+    <p class="subtle">
+      Je downloadt een agendabestand.
+      Er wordt geen e-mail verstuurd en geen afspraak geboekt.
+    </p>
+  </div>
+
+  <form id="reminder-form" class="panel">
+    <label>
+      Waarvoor wil je een herinnering?
+      <select id="reminder-kind">
+        <option>Winterbanden bespreken</option>
+        <option>Zomerbanden bespreken</option>
+        <option>Banden laten controleren</option>
+      </select>
+    </label>
+
+    <label>
+      Datum
+      <input id="reminder-date" type="date" required>
+    </label>
+
+    <button class="button full" type="submit">
+      Download agenda-herinnering
+    </button>
+
+    <p class="small">
+      Importeer het bestand in je agenda en controleer
+      of meldingen zijn ingeschakeld.
+    </p>
+  </form>
+</section>
+
+<section id="afspraak" class="soft-section">
+  <div class="wrap section split">
+
+    <div>
+      <span class="eyebrow dark">WE HELPEN JE GRAAG VERDER</span>
+
+      <h2>Vraag jouw offerte aan.</h2>
+
+      <p>
+        Nieuwe banden nodig of een bandenwissel plannen?
+        Vul je gegevens in en C&B neemt contact met je op
+        om de mogelijkheden te bespreken.
+      </p>
+
+      <a class="phone" href="tel:+3292868936">
+        09 286 89 36
+      </a>
+
+      <p>
+        Oosterzelesteenweg 7<br>
+        9230 Wetteren
+      </p>
+
+      <a class="button secondary"
+         href="https://www.google.com/maps/dir/?api=1&destination=Oosterzelesteenweg+7+9230+Wetteren"
+         target="_blank"
+         rel="noopener">
+        Route naar C&B
+      </a>
+
+      <p class="small">
+        Je aanvraag is vrijblijvend.
+        Een afspraak is pas bevestigd na persoonlijk contact.
+      </p>
+    </div>
+
+    <form class="panel" id="request-form">
+      <div class="grid two">
+        <label>
+          Je naam *
+          <input name="naam" required maxlength="100" autocomplete="name">
+        </label>
+
+        <label>
+          Telefoonnummer *
+          <input name="telefoon" type="tel" required maxlength="40" autocomplete="tel">
+        </label>
+      </div>
+
+      <label>
+        Voertuig / nummerplaat
+        <input name="voertuig" maxlength="100" placeholder="Bijvoorbeeld VW Golf">
+      </label>
+
+      <div class="grid two">
+        <label>
+          Gewenste dienst
+          <select name="dienst">
+            <option>Bandenadvies / offerte</option>
+            <option>Bandenwissel</option>
+            <option>Montage</option>
+            <option>Herstelling / controle</option>
+          </select>
+        </label>
+
+        <label>
+          Voorkeursdatum
+          <input name="datum" type="date">
+        </label>
+      </div>
+
+      <label>
+        Je vraag of opmerkingen
+        <textarea
+          name="vraag"
+          id="question"
+          rows="3"
+          maxlength="2000"
+          placeholder="Vertel ons waarmee we kunnen helpen..."
+        ></textarea>
+      </label>
+
+      <p class="privacy-note">
+        We gebruiken je gegevens uitsluitend om je aanvraag te behandelen.
+        Meer informatie vind je in onze privacyverklaring.
+      </p>
+
+      <button class="button full" type="submit">
+        Verstuur mijn aanvraag
+      </button>
+
+      <p class="small">
+        C&B ontvangt je aanvraag en neemt contact met je op.
+        Er wordt niet automatisch een afspraak geboekt.
+      </p>
+
+      <p id="request-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<section class="wrap section faq">
+  <h2>Handig om te weten.</h2>
+
+  <details>
+    <summary>Kan ik hier meteen boeken of betalen?</summary>
+    <p>
+      Je kunt een offerteaanvraag indienen.
+      Je spreekt het bezoek en de definitieve prijs rechtstreeks met C&B af.
+      Online betalen is momenteel niet mogelijk.
+    </p>
+  </details>
+
+  <details>
+    <summary>Zijn dit actuele bandenprijzen?</summary>
+    <p>
+      Nee. De getoonde opties en vooraf ingevulde bedragen zijn voorbeelden.
+      Vraag C&B naar de actuele merken, voorraad en tarieven.
+    </p>
+  </details>
+
+  <details>
+    <summary>Worden mijn gegevens bewaard?</summary>
+    <p>
+      Wanneer je het aanvraagformulier verstuurt, worden je gegevens
+      opgeslagen om je aanvraag te behandelen.
+      De privacyverklaring moet uitleggen hoelang de gegevens worden
+      bewaard en welke rechten je hebt.
+    </p>
+  </details>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <img
+      src="assets/logo.svg"
+      width="240"
+      height="57"
+      alt="C&B Banden Centrale Wetteren"
+    >
+
+    <p>Jouw grip. Onze expertise.</p>
+
+    <a href="tel:+3292868936">09 286 89 36</a>
+
+    <p class="small">
+      *Reviewscore zoals aangeleverd: 5,0 met 136 reviews.
+      Geen live koppeling. Sfeerbeeld is illustratief.
+    </p>
+
+    <small>
+      Website door Upside · <span id="year"></span>
+    </small>
+  </div>
+</footer>
+
+</body>
+</html>
