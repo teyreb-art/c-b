@@ -1,6 +1,57 @@
 import { problem, authenticate, signIn, signOut, clearSessionCookie } from './access.js';
 
 const statuses = ['nieuw', 'in behandeling', 'afgerond', 'geannuleerd'];
+
+const csvCell = value => {
+  const text = String(value ?? '');
+  const safe = /^[\s]*[=+\-@\t\r]/.test(text)
+    ? "'" + text
+    : text;
+  return '"' + safe.replace(/"/g, '""') + '"';
+};
+
+const csvDate = value => value
+  ? new Intl.DateTimeFormat('nl-BE', {
+      dateStyle: 'short',
+      timeZone: 'Europe/Brussels'
+    }).format(new Date(value.length === 10 ? value + 'T12:00:00Z' : value))
+  : '';
+
+function csvResponse(rows) {
+  const columns = [
+    ['Naam', 'name'],
+    ['E-mail', 'email'],
+    ['Telefoon', 'phone'],
+    ['Voertuig', 'vehicle'],
+    ['Dienst', 'service'],
+    ['Voorkeursdatum', 'preferred_date'],
+    ['Status', 'status'],
+    ['Indicatieve prijs', 'indicative_total'],
+    ['Opmerking', 'message'],
+    ['Ontvangen op', 'created_at']
+  ];
+
+  const lines = [
+    columns.map(([label]) => csvCell(label)).join(';'),
+    ...rows.map(row =>
+      columns.map(([label, key]) => {
+        const value = key === 'created_at'
+          ? csvDate(row[key])
+          : row[key];
+        return csvCell(value);
+      }).join(';')
+    )
+  ];
+
+  return new Response('\uFEFF' + lines.join('\r\n'), {
+    headers: {
+      ...headers,
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="cb-testaanvragen.csv"'
+    }
+  });
+}
+
 const headers = {
   'Cache-Control': 'no-store',
   'X-Content-Type-Options': 'nosniff',
