@@ -28,3 +28,5 @@ Geen contactgegevens worden op een server bewaard door deze code.
 De fonts laden via Google Fonts; zonder internet worden systeemfonts gebruikt.
 
 Aanpassen: index.html (inhoud), style.css (ontwerp), script.js (functies), assets (afbeeldingen).
+
+nieuwe regel
