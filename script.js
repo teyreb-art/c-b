@@ -261,6 +261,7 @@ $('request-form').addEventListener('submit', async event => {
 
   const payload = {
     name: String(data.get('naam') || '').trim(),
+    email: String(data.get('email') || '').trim(),
     phone: String(data.get('telefoon') || '').trim(),
     vehicle: String(data.get('voertuig') || '').trim(),
     service: String(data.get('dienst') || '').trim(),
