@@ -1,4 +1,5 @@
 import { problem, authenticate, signIn, signOut, clearSessionCookie } from './access.js';
+import { handleLoyalty } from './loyalty.js';
 
 const statuses = ['nieuw', 'in behandeling', 'afgerond', 'geannuleerd'];
 
